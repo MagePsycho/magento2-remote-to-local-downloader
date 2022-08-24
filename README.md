@@ -63,6 +63,7 @@ cd /path/to/new/project
 m2-remote-to-local
 ```
 On successfully operation, you will receive three files in your local
-1. `{project}.tar.gz`
-2. `{project}.sql.gz`
-3. `env.php` (ready to be used with warden settings)
+1. `{project}.tar.gz` (Codebase dump without `media`, `var`, `generation` folders and `app/etc/env.php` file)
+2. `{project}.sql.gz` (Database dump)
+3. `env.php` (Original file from remote - *can be safely deleted*)
+4. `env-warden.php`  (Ready to use file with your Warden environment)
