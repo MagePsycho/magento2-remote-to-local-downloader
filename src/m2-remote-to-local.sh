@@ -19,6 +19,20 @@ M2_BACKUP_DIR=''
 M2_PROJECT_NAME=''
 source "./.m2-remote-to-local.conf"
 
+echo 'Checking prerequisites...'
+if [[ ! -f "${M2_ROOT_DIR}" ]]; then
+    echo "M2_ROOT_DIR is empty"
+    exit 1
+fi
+if [[ ! -f "${M2_BACKUP_DIR}" ]]; then
+    echo "M2_BACKUP_DIR is empty"
+    exit 1
+fi
+if [[ ! -f "${M2_PROJECT_NAME}" ]]; then
+    echo "M2_PROJECT_NAME is empty"
+    exit 1
+fi
+
 echo 'Connecting to remote...'
 _sshPassOption=
 _sshOption=
