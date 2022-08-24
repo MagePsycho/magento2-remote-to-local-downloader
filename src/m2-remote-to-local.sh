@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+set -euo pipefail
 
 if [[ ! -f "./.m2-remote-to-local.conf" ]]; then
     echo "Config file does not exist: ./.m2-remote-to-local.conf"
