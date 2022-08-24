@@ -1,0 +1,15 @@
+SSH_HOST=''
+SSH_USER=''
+SSH_PORT='22'
+
+# Use key or password?
+# USE_PASS=1|0, 1 -> use password, 0 -> use key file
+USE_PASS=0
+SSH_PASS=''
+SSH_PRIVATE_KEY=''
+SSH_PASSPHRASE=''
+
+M2_PROJECT_NAME=''
+# Absolute path (without trailing slash)
+M2_ROOT_DIR=''
+M2_BACKUP_DIR=''
