@@ -62,6 +62,10 @@ curl -0 https://raw.githubusercontent.com/MagePsycho/magento2-db-code-backup-bas
 chmod +x m2-backup.sh
 echo 'Backing up code & db...'
 ./m2-backup.sh --backup-db --backup-code --skip-media --backup-name="$M2_PROJECT_NAME" --src-dir="$M2_ROOT_DIR" --dest-dir="$M2_BACKUP_DIR"
+# @todo in-case if mysqldump throws an error
+# bin/magento config:set system/backup/functionality_enabled 1
+# bin/magento setup:backup --db
+# DB backup path: /var/www/html/var/backups/{timestamp}_db.sql
 EOL
 
 echo 'Downloading remote code & db backups...'
