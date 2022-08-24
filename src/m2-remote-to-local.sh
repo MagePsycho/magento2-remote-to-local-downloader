@@ -141,8 +141,8 @@ $(php -r '
 
 echo "Code, DB dump & env.php has been successfully downloaded:"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-echo "> "$M2_PROJECT_NAME".sql.gz"
-echo "> "$M2_PROJECT_NAME".tar.gz"
-echo "> "env.php -> env-warden.php"
+echo "> ${M2_PROJECT_NAME}.sql.gz"
+echo "> ${M2_PROJECT_NAME}.tar.gz"
+echo "> env.php -> env-warden.php"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Now you can setup the project locally with warden"
