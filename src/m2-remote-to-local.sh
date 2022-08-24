@@ -60,6 +60,13 @@ cd "$M2_ROOT_DIR"
 echo 'Installing backup script...'
 curl -0 https://raw.githubusercontent.com/MagePsycho/magento2-db-code-backup-bash-script/master/src/mage2-db-code-backup.sh -o m2-backup.sh
 chmod +x m2-backup.sh
+
+echo 'Collecting stack versions...'
+php -v
+bin/magento --version
+composer --version
+mysql --version
+
 echo 'Backing up code & db...'
 ./m2-backup.sh --backup-db --backup-code --skip-media --backup-name="$M2_PROJECT_NAME" --src-dir="$M2_ROOT_DIR" --dest-dir="$M2_BACKUP_DIR"
 # @todo in-case if mysqldump throws an error
