@@ -108,8 +108,8 @@ $(php -r '
       ];
   }
 
-  $cacheFrontend = $env["cache"]["frontend"] ?? [];
-  if (!empty($cacheFrontend)) {
+  $defaultCaching = $env["cache"]["frontend"]["default"]["backend"] ?? null;
+  if ($defaultCaching && strpos($defaultCaching, "Redis") !== false) {
       $env["cache"]["frontend"]["default"]["backend_options"] = [
           "server" => "redis",
           "database" => "0",
@@ -118,6 +118,9 @@ $(php -r '
           "compress_data" => "1",
           "compression_lib" => ""
       ];
+  }
+  $pageCaching = $env["cache"]["frontend"]["page_cache"]["backend"] ?? null;
+  if ($pageCaching && strpos($pageCaching, "Redis") !== false) {
       $env["cache"]["frontend"]["page_cache"]["backend_options"] = [
           "server" => "redis",
           "database" => "1",
@@ -129,8 +132,13 @@ $(php -r '
   }
 
   $envContent =  "<?php" . PHP_EOL . " return " . var_export($env, true) . ";";
-  file_put_contents("./env-copy.php", $envContent);
+  file_put_contents("./env-warden.php", $envContent);
 ')
 
-echo "Code, DB dump & env.php has been successfully downloaded."
-echo "Now you can setup the localhost with warden"
+echo "Code, DB dump & env.php has been successfully downloaded:"
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+echo "> "$M2_PROJECT_NAME".sql.gz"
+echo "> "$M2_PROJECT_NAME".tar.gz"
+echo "> "env.php -> env-warden.php"
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+echo "Now you can setup the project locally with warden"
