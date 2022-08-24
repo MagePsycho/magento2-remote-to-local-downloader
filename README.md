@@ -62,7 +62,7 @@ After you have configured the SSH settings, it's time for action
 cd /path/to/new/project
 m2-remote-to-local
 ```
-On successfully operation, you will receive three files in your local
+On successfully operation, you will receive these files in your local
 1. `{project}.tar.gz` (Codebase dump without `media`, `var`, `generation` folders and `app/etc/env.php` file)
 2. `{project}.sql.gz` (Database dump)
 3. `env.php` (Original file from remote - *can be safely deleted*)
