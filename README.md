@@ -84,4 +84,5 @@ On successfully operation, you will receive these files in your local
 
  - [ ] Add option to include media folders for backup
  - [ ] Refactor the bash script to utilize the standard coding
+ - [ ] Make use of `bin/magento setup:backup --db` as a fallback of `mysqldump` 
 
