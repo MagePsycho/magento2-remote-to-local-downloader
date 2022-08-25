@@ -59,7 +59,7 @@ ${_sshPassOption}ssh $_sshOption -T "$SSH_USER"@"$SSH_HOST" -p "$SSH_PORT" << EO
 cd "$M2_ROOT_DIR"
 echo 'Installing backup script...'
 curl -0 https://raw.githubusercontent.com/MagePsycho/magento2-db-code-backup-bash-script/master/src/mage2-db-code-backup.sh -o m2-backup.sh
-chmod +x m2-backup.sh
+chmod +x ./m2-backup.sh
 
 echo 'Collecting stack versions...'
 php -v
@@ -73,6 +73,7 @@ echo 'Backing up code & db...'
 # bin/magento config:set system/backup/functionality_enabled 1
 # bin/magento setup:backup --db
 # DB backup path: /var/www/html/var/backups/{timestamp}_db.sql
+rm -f ./m2-backup.sh
 EOL
 
 echo 'Downloading remote code & db backups...'
