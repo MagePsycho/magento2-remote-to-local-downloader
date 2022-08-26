@@ -10,50 +10,77 @@ fi
 SSH_HOST=''
 SSH_USER=''
 SSH_PORT='22'
-USE_PASS=0
+AUTH_PASS=0
 SSH_PASS=''
+AUTH_PEM=0
 SSH_PRIVATE_KEY=''
+AUTH_PUB=0
 SSH_PASSPHRASE=''
+SKIP_MEDIA_FILES=1
 M2_ROOT_DIR=''
 M2_BACKUP_DIR=''
 M2_PROJECT_NAME=''
 source "./.m2-remote-to-local.conf"
 
+# Prepare default values
+DATETIME=$(date +"%Y-%m-%d-%H-%M-%S")
+M2_BACKUP_NAME="{M2_PROJECT_NAME}.${DATETIME}"
+
 echo 'Checking prerequisites...'
 if [[ -z "${M2_ROOT_DIR}" ]]; then
-    echo "M2_ROOT_DIR is empty"
+    echo "M2_ROOT_DIR is empty."
     exit 1
 fi
 if [[ -z "${M2_BACKUP_DIR}" ]]; then
-    echo "M2_BACKUP_DIR is empty"
+    echo "M2_BACKUP_DIR is empty."
     exit 1
 fi
 if [[ -z "${M2_PROJECT_NAME}" ]]; then
-    echo "M2_PROJECT_NAME is empty"
+    echo "M2_PROJECT_NAME is empty."
     exit 1
 fi
+if [[ "$AUTH_PASS" -ne 1 ]] && [[ "$AUTH_PEM" -ne 1 ]] && [[ "$AUTH_PUB" -ne 1 ]]; then
+    echo "One of the authentication types(AUTH_PASS, AUTH_PEM & AUTH_PUB) should be enabled."
+    exit 1
+fi
+
 
 echo 'Connecting to remote...'
 _sshPassOption=
 _sshOption=
 _scpOption=
-if [[ "$USE_PASS" -eq 1 ]]; then
+if [[ "$AUTH_PASS" -eq 1 ]]; then
     _sshPassOption="sshpass -p ${SSH_PASS} "
     _sshOption="-o StrictHostKeyChecking=no"
     _scpOption="-P ${SSH_PORT}"
-else
-		if [[ -z "$SSH_PASSPHRASE" ]]; then
-        _sshPassOption=""
-    else
-        _sshPassOption="sshpass -Ppassphrase -p ${SSH_PASSPHRASE} "
-		fi
+fi
+
+if [[ "$AUTH_PEM" -eq 1 ]]; then
     _sshOption="-i ${SSH_PRIVATE_KEY}"
     _scpOption="-i ${SSH_PRIVATE_KEY} -P ${SSH_PORT}"
+fi
+
+if [[ "$AUTH_PUB" -eq 1 ]]; then
+    _sshOption=
+    _scpOption="-P ${SSH_PORT}"
+fi
+
+if [[ "$AUTH_PEM" -eq 1 ]] || [[ "$AUTH_PUB" -eq 1 ]]; then
+	if [[ -z "$SSH_PASSPHRASE" ]]; then
+        _sshPassOption=
+    else
+        _sshPassOption="sshpass -Ppassphrase -p ${SSH_PASSPHRASE} "
+	fi
+fi
+_skipMediaOption='--skip-media'
+if [[ "$SKIP_MEDIA_FILES" -eq 0 ]]; then
+    _skipMediaOption=
 fi
 
 #sshpass -p "${SSH_PASS}" ssh -o StrictHostKeyChecking=no -T "$SSH_USER"@"$SSH_HOST" -p "$SSH_PORT" << EOL
 #sshpass -Ppassphrase -p "${SSH_PASSPHRASE}" ssh -i "${SSH_PRIVATE_KEY}" -T "$SSH_USER"@"$SSH_HOST" -p "$SSH_PORT" << EOL
 #ssh -i "${SSH_PRIVATE_KEY}" -T "$SSH_USER"@"$SSH_HOST" -p "$SSH_PORT" << EOL
+#ssh -T "$SSH_USER"@"$SSH_HOST" -p "$SSH_PORT" << EOL
 
 ${_sshPassOption}ssh $_sshOption -T "$SSH_USER"@"$SSH_HOST" -p "$SSH_PORT" << EOL
 cd "$M2_ROOT_DIR"
@@ -68,7 +95,7 @@ composer --version
 mysql --version
 
 echo 'Backing up code & db...'
-./m2-backup.sh --backup-db --backup-code --skip-media --backup-name="$M2_PROJECT_NAME" --src-dir="$M2_ROOT_DIR" --dest-dir="$M2_BACKUP_DIR"
+./m2-backup.sh --backup-db --backup-code $_skipMediaOption --backup-name="$M2_BACKUP_NAME" --src-dir="$M2_ROOT_DIR" --dest-dir="$M2_BACKUP_DIR"
 # @todo in-case if mysqldump throws an error
 # bin/magento config:set system/backup/functionality_enabled 1
 # bin/magento setup:backup --db
@@ -77,8 +104,8 @@ rm -f ./m2-backup.sh
 EOL
 
 echo 'Downloading remote code & db backups...'
-${_sshPassOption}scp $_scpOption "$SSH_USER"@"$SSH_HOST":"$M2_BACKUP_DIR"/"$M2_PROJECT_NAME".sql.gz ./
-${_sshPassOption}scp $_scpOption "$SSH_USER"@"$SSH_HOST":"$M2_BACKUP_DIR"/"$M2_PROJECT_NAME".tar.gz ./
+${_sshPassOption}scp $_scpOption "$SSH_USER"@"$SSH_HOST":"$M2_BACKUP_DIR"/"$M2_BACKUP_NAME".sql.gz ./
+${_sshPassOption}scp $_scpOption "$SSH_USER"@"$SSH_HOST":"$M2_BACKUP_DIR"/"$M2_BACKUP_NAME".tar.gz ./
 
 echo 'Preparing env.php file...'
 ${_sshPassOption}scp $_scpOption "$SSH_USER"@"$SSH_HOST":"$M2_ROOT_DIR"/app/etc/env.php ./
@@ -147,10 +174,17 @@ $(php -r '
   file_put_contents("./env-warden.php", $envContent);
 ')
 
+echo "Housekeeping on remote server..."
+${_sshPassOption}ssh $_sshOption -T "$SSH_USER"@"$SSH_HOST" -p "$SSH_PORT" << EOL
+cd ${M2_BACKUP_DIR}
+rm -f ${M2_BACKUP_NAME}.sql.gz
+rm -f ${M2_BACKUP_NAME}.tar.gz
+EOL
+
 echo "Code, DB dump & env.php has been successfully downloaded:"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-echo "> ${M2_PROJECT_NAME}.sql.gz"
-echo "> ${M2_PROJECT_NAME}.tar.gz"
+echo "> ${M2_BACKUP_NAME}.sql.gz"
+echo "> ${M2_BACKUP_NAME}.tar.gz"
 echo "> env.php -> env-warden.php"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Now you can setup the project locally with warden"

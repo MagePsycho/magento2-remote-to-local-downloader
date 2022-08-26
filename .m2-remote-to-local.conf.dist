@@ -1,15 +1,41 @@
+# =================================
+# SSH Basic Information
+# =================================
 SSH_HOST=''
 SSH_USER=''
 SSH_PORT='22'
 
-# Use key or password?
-# USE_PASS=1|0, 1 -> use password, 0 -> use key file
-USE_PASS=0
+# =================================
+# Types of Authentication
+# =================================
+
+# 1. Password based
+# Use 1 to enable, 0 to disable
+AUTH_PASS=0
 SSH_PASS=''
+
+# 2. Private Key (.pem) based
+# Use 1 to enable, 0 to disable
+AUTH_PEM=0
+# Absolute path to private key
 SSH_PRIVATE_KEY=''
+
+# 3. Public Key (~/.ssh/id_rsa.pub) based
+# Use 1 to enable, 0 to disable
+AUTH_PUB=0
+
+# If passphrase has been setup for the keys
 SSH_PASSPHRASE=''
 
+# =================================
+# Remote Directories
+# =================================
+# Name will be used as a basename for backups, ex: {project-name}.tar.gz
 M2_PROJECT_NAME=''
-# Absolute path (without trailing slash)
+# Use 0 if you want to include the media files
+SKIP_MEDIA_FILES=1
+
+# Absolute path to Magento 2 root directory
 M2_ROOT_DIR=''
+# Absolute path to backup directory
 M2_BACKUP_DIR=''

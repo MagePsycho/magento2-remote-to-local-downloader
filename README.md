@@ -82,8 +82,9 @@ On successfully operation, you will receive these files in your local
 
 ## TODOS
 
- - [ ] Add option to include media folders for backup
+ - [x] Add option to include media folders for backup
  - [ ] Refactor the bash script to utilize the standard coding
  - [ ] Make use of `bin/magento setup:backup --db` as a fallback of `mysqldump`
- - [ ] Add option of housekeeping in remote
+ - [x] Add option of housekeeping in remote
+ - [ ] Add option to strip off the database for development
 
