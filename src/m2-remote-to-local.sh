@@ -24,7 +24,7 @@ source "./.m2-remote-to-local.conf"
 
 # Prepare default values
 DATETIME=$(date +"%Y-%m-%d-%H-%M-%S")
-M2_BACKUP_NAME="{M2_PROJECT_NAME}.${DATETIME}"
+M2_BACKUP_NAME="${M2_PROJECT_NAME}.${DATETIME}"
 
 echo 'Checking prerequisites...'
 if [[ -z "${M2_ROOT_DIR}" ]]; then
@@ -118,7 +118,6 @@ $(php -r '
   $env["db"]["connection"]["default"]["password"] = "magento";
   $env["db"]["connection"]["default"]["dbname"] = "magento";
 
-  //$env["downloadable_domains"] = ["{M2_PROJECT_NAME}.test"];
   $sessionSave = $env["session"]["save"] ?? "";
   if ($sessionSave == "redis") {
       $env["session"]["redis"] = [
